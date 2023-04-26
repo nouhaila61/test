@@ -1,40 +1,66 @@
+#include <stdarg.h>
+#include <stdio.h>
 
-int _printf(const char *format, ...)
-{
+int _putchar(char c) {
+	return (write(1, &c, 1));
+}
+
+int handle_string(char *str) {
+	if (str == NULL) {
+		return handle_string("(null)");
+	}
+	int count = 0;
+	for (int i = 0; str[i] != '\0'; i++) {
+		count += _putchar(str[i]);
+	}
+	return count;
+}
+
+int handle_format(const char **format, va_list args) {
+	int count = 0;
+	switch (**format) {
+		case 'c': {
+			char c = va_arg(args, int);
+			count += _putchar(c);
+			(*format)++;
+			break;
+		}
+		case 's': {
+			char *str = va_arg(args, char *);
+			count += handle_string(str);
+			(*format)++;
+			break;
+		}
+		case '%': {
+			_putchar('%');
+			count++;
+			(*format)++;
+			break;
+		}
+		default: {
+			(*format)++;
+			break;
+		}
+	}
+	return count;
+}
+
+int _printf(const char *format, ...) {
+	if (format == NULL || format[0] == '\0') {
+		return -1;
+	}
+	int count = 0;
 	va_list args;
 	va_start(args, format);
-	int count = 0;
-	while (*format)
-	{
-		if (*format == '%')
-		{
+	while (*format) {
+		if (*format == '%') {
 			format++;
-			switch (*format)
-			{
-				case 'c': count += _putchar(va_arg(args, int)); break;
-				case 's': {
-					const char* s = va_arg(args, const char*);
-					while (*s) count += _putchar(*s++);
-					break;
-				}
-				case '%': count += _putchar('%'); break;
-				case 'd':
-				case 'i':
-				{
-					int num = va_arg(args, int), len = num < 0 ? 1 : 0;
-					while (num) len++, num /= 10;
-					char buf[len + 1];
-					snprintf(buf, len + 1, "%d", va_arg(args, int));
-					const char* s = buf;
-					while (*s) count += _putchar(*s++);
-					break;
-				}
-			}
-		} else
+			count += handle_format(&format, args);
+		} else {
 			count += _putchar(*format);
-		format++;
+			format++;
+		}
 	}
 	va_end(args);
 	return count;
 }
-
