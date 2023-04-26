@@ -1,23 +1,92 @@
-int _printf(const char format, ...)
+int handle_char(va_list args)
 {
-	if (!format) return -1;
+	char c = va_arg(args, int);
+	return _putchar(c);
+}
+
+int handle_string(va_list args)
+{
+	char *str = va_arg(args, char *);
+	return str == NULL ? handle_string("(null)") : handle_string(str);
+}
+
+int handle_integer(va_list args)
+{
+	int num = va_arg(args, int);
+	int count = num == 0 ? 1 : 0;
+
+	if (num == -2147483648)
+	{
+		return _printf("%d", -214748364) + _printf("8");
+	}
+	if (num < 0)
+	{
+		count += _putchar('-');
+		num = -num;
+	}
+
+	count += len_num(num);
+	handle_number(num);
+	return count;
+}
+
+int handle_percent(va_list args)
+{
+	return _putchar('%');
+}
+
+int handle_unknown(char c)
+{
+	_putchar('%');
+	return c == '\0' ? 0 : _putchar(c);
+}
+
+int len_num(int num)
+{
+	return num == 0 ? 0 : 1 + len_num(num / 10);
+}
+
+int _printf(const char *format, ...)
+{
+	int count = 0;
 	va_list args;
 	va_start(args, format);
-	int count = 0;
-	while (format)
+
+	if (!format || !format[0])
+		return -1;
+
+	while (*format)
 	{
-		if (format == '%')
+		if (*format == '%')
 		{
 			format++;
-			if (format == 'c') count += _putchar(va_arg(args, int));
-			else if (format == 's') count += handle_string(va_arg(args, char));
-			else if (format == '%') count += _putchar('%');
-			else if (format == 'd' || format == 'i') count += handle_number(va_arg(args, int));
-			else count += _putchar(format) - 1;
-			format++;
+			switch (*format)
+			{
+			case 'c':
+				count += handle_char(args);
+				break;
+			case 's':
+				count += handle_string(args);
+				break;
+			case 'd':
+			case 'i':
+				count += handle_integer(args);
+				break;
+			case '%':
+				count += handle_percent(args);
+				break;
+			default:
+				count += handle_unknown(*format);
+				break;
+			}
 		}
-		else count += _putchar(*format++);
+		else
+		{
+			count += _putchar(*format);
+		}
+		format++;
 	}
+
 	va_end(args);
 	return count;
 }
