@@ -1,93 +1,56 @@
-int handle_char(va_list args)
-{
-    char c = va_arg(args, int);
-    return _putchar(c);
-}
+/**
+ * handle_char - Handles the 'c' format specifier
+ * @args: The argument list containing the character to be printed
+ *
+ * Return: The number of characters printed
+ */
+int handle_char(va_list args);
 
-int handle_string(va_list args)
-{
-    char *str = va_arg(args, char *);
-    return str == NULL ? handle_string("(null)") : handle_string(str);
-}
+/**
+ * handle_string - Handles the 's' format specifier
+ * @args: The argument list containing the string to be printed
+ *
+ * Return: The number of characters printed
+ */
+int handle_string(va_list args);
 
-int handle_integer(va_list args)
-{
-    int num = va_arg(args, int);
-    int count = num == 0 ? 1 : 0;
+/**
+ * handle_integer - Handles the 'd' and 'i' format specifiers
+ * @args: The argument list containing the integer to be printed
+ *
+ * Return: The number of characters printed
+ */
+int handle_integer(va_list args);
 
-    if (num == -2147483648)
-    {
-        return _printf("%d", -214748364) + _printf("8");
-    }
-    if (num < 0)
-    {
-        count += _putchar('-');
-        num = -num;
-    }
+/**
+ * handle_percent - Handles the '%%' format specifier
+ * @args: The argument list (unused)
+ *
+ * Return: The number of characters printed
+ */
+int handle_percent(va_list args);
 
-    count += len_num(num);
-    handle_number(num);
-    return count;
-}
+/**
+ * handle_unknown - Handles unknown format specifiers
+ * @c: The unknown format specifier
+ *
+ * Return: The number of characters printed
+ */
+int handle_unknown(char c);
 
-int handle_percent(va_list args)
-{
-    return _putchar('%');
-}
+/**
+ * len_num - Calculates the length of a number
+ * @num: The number to calculate the length of
+ *
+ * Return: The length of the number
+ */
+int len_num(int num);
 
-int handle_unknown(char c)
-{
-    _putchar('%');
-    return c == '\0' ? 0 : _putchar(c);
-}
-
-int len_num(int num)
-{
-    return num == 0 ? 0 : 1 + len_num(num / 10);
-}
-
-int _printf(const char *format, ...)
-{
-    int count = 0;
-    va_list args;
-    va_start(args, format);
-
-    if (!format || !format[0])
-        return -1;
-
-    while (*format)
-    {
-        if (*format == '%')
-        {
-            format++;
-            switch (*format)
-            {
-            case 'c':
-                count += handle_char(args);
-                break;
-            case 's':
-                count += handle_string(args);
-                break;
-            case 'd':
-            case 'i':
-                count += handle_integer(args);
-                break;
-            case '%':
-                count += handle_percent(args);
-                break;
-            default:
-                count += handle_unknown(*format);
-                break;
-            }
-        }
-        else
-        {
-            count += _putchar(*format);
-        }
-        format++;
-    }
-
-    va_end(args);
-    return count;
-}
-
+/**
+ * _printf - Prints formatted output to stdout
+ * @format: The format string to use
+ * @...: Additional arguments for the format string
+ *
+ * Return: The number of characters printed
+ */
+int _printf(const char *format, ...);
