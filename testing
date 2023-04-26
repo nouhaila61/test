@@ -1,40 +1,40 @@
 
 int _printf(const char *format, ...)
 {
-    va_list args;
-    va_start(args, format);
-    int count = 0;
-    while (*format)
+	va_list args;
+	va_start(args, format);
+	int count = 0;
+	while (*format)
 	{
-        if (*format == '%')
+		if (*format == '%')
 		{
-            format++;
-            switch (*format)
+			format++;
+			switch (*format)
 			{
-                case 'c': count += _putchar(va_arg(args, int)); break;
-                case 's': {
-                    const char* s = va_arg(args, const char*);
-                    while (*s) count += _putchar(*s++);
-                    break;
-                }
-                case '%': count += _putchar('%'); break;
-                case 'd':
-                case 'i':
+				case 'c': count += _putchar(va_arg(args, int)); break;
+				case 's': {
+					const char* s = va_arg(args, const char*);
+					while (*s) count += _putchar(*s++);
+					break;
+				}
+				case '%': count += _putchar('%'); break;
+				case 'd':
+				case 'i':
 				{
-                    int num = va_arg(args, int), len = num < 0 ? 1 : 0;
-                    while (num) len++, num /= 10;
-                    char buf[len + 1];
-                    snprintf(buf, len + 1, "%d", va_arg(args, int));
-                    const char* s = buf;
-                    while (*s) count += _putchar(*s++);
-                    break;
-                }
-            }
-        } else
-            count += _putchar(*format);
-        format++;
-    }
-    va_end(args);
-    return count;
+					int num = va_arg(args, int), len = num < 0 ? 1 : 0;
+					while (num) len++, num /= 10;
+					char buf[len + 1];
+					snprintf(buf, len + 1, "%d", va_arg(args, int));
+					const char* s = buf;
+					while (*s) count += _putchar(*s++);
+					break;
+				}
+			}
+		} else
+			count += _putchar(*format);
+		format++;
+	}
+	va_end(args);
+	return count;
 }
 
